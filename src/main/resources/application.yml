@@ -1,0 +1,60 @@
+
+server:
+  port: 9090
+
+spring:
+  application:
+    name: API-GATEWAY
+  cloud:
+    gateway:
+      routes:
+        - id: PAYMENT-PROCESSOR-SERVICE
+          uri: lb://PAYMENT-PROCESSOR-SERVICE
+          predicates:
+            - Path=/payment/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: PAYMENT-PROCESSOR-SERVICE
+                fallbackuri: forward:/paymentFallBack
+
+        - id: SERVICE-PROVIDER-SERVICE
+          uri: lb://SERVICE-PROVIDER-SERVICE
+          predicates:
+            - Path=/restaurant/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: SERVICE-PROVIDER-SERVICE
+                fallbackuri: forward:/restaurantFallBack
+
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 1
+    leaseExpirationDurationInSeconds: 2
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8761/eureka/
+    healthcheck:
+      enabled: true
+    lease:
+      duration: 5
+
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      registerHealthIndicator: true
+      slidingWindowSize: 8
+      slidingWindowType: COUNT_BASED
+      minimumNumberOfCalls: 5
+      permittedNumberOfCallsInHalfOpenState: 3
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      waitDurationInOpenState: 5s
+      failureRateThreshold: 50
+      eventConsumerBufferSize: 10
+      recordExceptions:
+        - java.io.IOException
+  instances:
+    custMain:
+      baseConfig: default
