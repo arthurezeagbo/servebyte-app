@@ -1,0 +1,42 @@
+server:
+  port: 8082
+
+app:
+  kafka:
+    payment:
+      topic: payment_topic
+  secret: sk_test_cccae62c3a49b035092c9a272eb4e1c1260da650
+
+
+spring:
+  main:
+    web-application-type=none:
+  application:
+    name: PAYMENT-PROCESSOR-SERVICE
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9093
+      group-id: payment_group_id
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      bootstrap-servers: localhost:9093
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 1
+    leaseExpirationDurationInSeconds: 2
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8761/eureka/
+    healthcheck:
+      enabled: true
+    lease:
+      duration: 5
+
+management:
+  security:
+    enabled: false
