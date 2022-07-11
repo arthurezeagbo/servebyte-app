@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/payment")
+@RequestMapping("/api/v1/payment")
 public class PaymentController {
 
     @Autowired
     private PaymentService paymentService;
 
     @PostMapping
-    public String makePayment(@RequestBody PaymentDto paymentDto){
+    public String InitiatePayment(@RequestBody PaymentDto paymentDto){
         return paymentService.makePayment(paymentDto);
     }
 }

@@ -2,7 +2,6 @@ package com.arthurezeagbo.paymentprocessor.serviceImpl;
 
 import com.arthurezeagbo.paymentprocessor.dto.PaymentDto;
 import com.arthurezeagbo.paymentprocessor.dto.PaymentResponseDto;
-import com.arthurezeagbo.paymentprocessor.service.MessageProducerService;
 import com.arthurezeagbo.paymentprocessor.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,13 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
-public class PaymentServiceIml implements PaymentService {
+public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     WebClient.Builder webclient;
 
-    @Autowired
-    MessageProducerService messageProducerService;
 
     @Value( "${app.secret}" )
     private String secret;
@@ -35,10 +32,6 @@ public class PaymentServiceIml implements PaymentService {
 
 
         if(!request.getStatus()) return "failed";
-
-        messageProducerService.processEmailNotification();
-
-
         return "success";
     }
 }
